@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def json_para_df(payload):
+def transformar_json_em_df(payload):
     series = payload[0]["resultados"][0]["series"]
     linhas = []
 
@@ -51,7 +51,7 @@ def limpar_estados(estados):
 def juntar_regiao(df, df_estados):
 
     df = df.merge(
-        df_estados[["uf_id", "regiao"]],
+        df_estados[["uf_id", "sigla", "regiao"]],
         on="uf_id",
         how="left"
     )

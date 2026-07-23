@@ -99,7 +99,7 @@ Responsável por transformar os dados brutos retornados pelas APIs do IBGE em Da
 
 ## Funções disponíveis
 
-### json_para_df(payload)
+### transformar_json_em_df(payload)
 
 Converte o JSON retornado pela API de população em um DataFrame pandas.
 
@@ -134,11 +134,13 @@ Saída esperada:
 
 Realiza a junção entre os dados de população e os dados dos estados utilizando o campo `uf_id`.
 
+A função adiciona as informações de sigla e região ao DataFrame de população.
+
 Saída esperada:
 
-| uf_id | nome | ano | valor | regiao |
-|---|---|---|---|---|
-| 23 | Ceará | 2025 | 9268836.0 | NE |
+| uf_id | nome | sigla | ano | valor | regiao |
+|---|---|---|---|---|---|
+| 23 | Ceará | CE | 2025 | 9268836.0 | NE |
 
 ---
 
@@ -146,14 +148,14 @@ Saída esperada:
 
 ```python
 from ingestao import buscar_estados, buscar_indicador_populacao
-from limpeza import json_para_df, limpar_estados, juntar_regiao
+from limpeza import transformar_json_em_df, limpar_estados, juntar_regiao
 
 estados = buscar_estados()
 populacao = buscar_indicador_populacao()
 
 df_estados = limpar_estados(estados)
 
-df = json_para_df(populacao)
+df = transformar_json_em_df(populacao)
 
 df = juntar_regiao(df, df_estados)
 

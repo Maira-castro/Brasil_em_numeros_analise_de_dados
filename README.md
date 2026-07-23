@@ -95,81 +95,66 @@ Retorna o JSON cru do IBGE, ainda **aninhado** — quem for fazer a limpeza prec
 
 ## Limpeza (limpeza.py)
 
-Responsável por transformar os dados brutos retornados pela API do IBGE em um DataFrame pronto para análise.
+Responsável por transformar os dados brutos retornados pelas APIs do IBGE em DataFrames organizados e prontos para análise.
 
-### Funções disponíveis
+## Funções disponíveis
 
-#### json_para_df(payload)
+### json_para_df(payload)
 
-Converte o JSON retornado pela API em um DataFrame pandas.
+Converte o JSON retornado pela API de população em um DataFrame pandas.
 
-##### Tratamentos realizados
-
+### Tratamentos realizados:
 - Extração dos dados da estrutura JSON.
 - Conversão dos valores para tipo numérico.
 - Remoção de valores inválidos ("..." e "-").
-- Tratamento de erros de conversão com `pd.to_numeric()`.
-- Remoção de valores nulos com `dropna()`.
-
-##### Exemplo de uso
-
-```python
-from limpeza import json_para_df
-
-df = json_para_df(populacao)
-```
-
-##### Saída esperada
-
-| uf_id | nome | ano | valor |
-|--------|--------|--------|--------|
-| 23 | Ceará | 2025 | 9268836.0 |
+- Tratamento de erros de conversão com pd.to_numeric().
+- Remoção de valores nulos com dropna().
 
 ---
 
-#### juntar_regiao(df, estados)
+### limpar_estados(estados)
 
-Adiciona ao DataFrame a região de cada estado utilizando os dados retornados pela função `buscar_estados()`.
+Transforma os dados brutos da API de estados em um DataFrame organizado.
 
-##### Exemplo de uso
+### Tratamentos realizados:
+- Extração do ID do estado.
+- Extração da sigla e nome do estado.
+- Extração da região brasileira.
+- Conversão do ID para tipo numérico.
 
-```python
-from limpeza import juntar_regiao
+Saída esperada:
 
-df = juntar_regiao(df, estados)
-```
+| uf_id | sigla | nome_estado | regiao |
+|---|---|---|---|
+| 23 | CE | Ceará | NE |
 
-##### Saída esperada
+---
+
+### juntar_regiao(df, df_estados)
+
+Realiza a junção entre os dados de população e os dados dos estados utilizando o campo `uf_id`.
+
+Saída esperada:
 
 | uf_id | nome | ano | valor | regiao |
-|--------|--------|--------|--------|--------|
+|---|---|---|---|---|
 | 23 | Ceará | 2025 | 9268836.0 | NE |
 
 ---
 
-### Fluxo de utilização
+## Fluxo de utilização
 
 ```python
 from ingestao import buscar_estados, buscar_indicador_populacao
-from limpeza import json_para_df, juntar_regiao
+from limpeza import json_para_df, limpar_estados, juntar_regiao
 
 estados = buscar_estados()
 populacao = buscar_indicador_populacao()
 
+df_estados = limpar_estados(estados)
+
 df = json_para_df(populacao)
-df = juntar_regiao(df, estados)
+
+df = juntar_regiao(df, df_estados)
 
 print(df.head())
-```
-
-### Resultado
-
-Ao final da etapa de limpeza, os dados ficam estruturados em um DataFrame contendo:
-
-- `uf_id` → código da Unidade Federativa.
-- `nome` → nome do estado.
-- `ano` → ano do indicador.
-- `valor` → valor numérico da população.
-- `regiao` → sigla da região brasileira (N, NE, CO, SE, S).
-
-Esta etapa garante que os dados estejam limpos, consistentes e prontos para as etapas de agregação, cálculo de KPIs e geração de gráficos Plotly.

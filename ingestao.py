@@ -62,4 +62,4 @@ def buscar_indicador_populacao():
     except ValueError as e:
         return f'Dado inválido: {e}'
 
-print(buscar_indicador_populacao())
+# print(buscar_indicador_populacao())

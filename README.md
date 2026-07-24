@@ -97,28 +97,42 @@ Retorna o JSON cru do IBGE, ainda **aninhado** — quem for fazer a limpeza prec
 
 Responsável por transformar os dados brutos retornados pelas APIs do IBGE em DataFrames organizados e prontos para análise.
 
+---
+
 ## Funções disponíveis
 
-### transformar_json_em_df(payload)
+### limpar_populacao(dados)
 
-Converte o JSON retornado pela API de população em um DataFrame pandas.
+Converte o JSON retornado pela API de população do IBGE em um DataFrame pandas.
 
 ### Tratamentos realizados:
-- Extração dos dados da estrutura JSON.
-- Conversão dos valores para tipo numérico.
-- Remoção de valores inválidos ("..." e "-").
-- Tratamento de erros de conversão com pd.to_numeric().
-- Remoção de valores nulos com dropna().
+
+- Extração dos dados da estrutura JSON aninhada.
+- Extração do ID da UF, nome do estado, ano e população.
+- Conversão do ano para o tipo inteiro.
+- Conversão da população para o tipo inteiro.
+- Remoção de registros duplicados.
+- Ordenação dos dados por estado e ano.
+- Remoção de valores ausentes.
+- Garantia dos tipos corretos das colunas.
+
+Saída esperada:
+
+| uf_id | estado | ano | populacao |
+|---|---|---|---|
+| 23 | Ceará | 2025 | 9268836 |
 
 ---
 
 ### limpar_estados(estados)
 
-Transforma os dados brutos da API de estados em um DataFrame organizado.
+Transforma os dados brutos retornados pela API de estados do IBGE em um DataFrame organizado.
 
 ### Tratamentos realizados:
+
 - Extração do ID do estado.
-- Extração da sigla e nome do estado.
+- Extração da sigla do estado.
+- Extração do nome do estado.
 - Extração da região brasileira.
 - Conversão do ID para tipo numérico.
 
@@ -134,13 +148,16 @@ Saída esperada:
 
 Realiza a junção entre os dados de população e os dados dos estados utilizando o campo `uf_id`.
 
-A função adiciona as informações de sigla e região ao DataFrame de população.
+A função adiciona ao DataFrame de população:
+
+- Sigla do estado.
+- Região brasileira.
 
 Saída esperada:
 
-| uf_id | nome | sigla | ano | valor | regiao |
+| uf_id | estado | sigla | ano | populacao | regiao |
 |---|---|---|---|---|---|
-| 23 | Ceará | CE | 2025 | 9268836.0 | NE |
+| 23 | Ceará | CE | 2025 | 9268836 | NE |
 
 ---
 
@@ -148,14 +165,14 @@ Saída esperada:
 
 ```python
 from ingestao import buscar_estados, buscar_indicador_populacao
-from limpeza import transformar_json_em_df, limpar_estados, juntar_regiao
+from limpeza import limpar_populacao, limpar_estados, juntar_regiao
 
 estados = buscar_estados()
 populacao = buscar_indicador_populacao()
 
 df_estados = limpar_estados(estados)
 
-df = transformar_json_em_df(populacao)
+df = limpar_populacao(populacao)
 
 df = juntar_regiao(df, df_estados)
 

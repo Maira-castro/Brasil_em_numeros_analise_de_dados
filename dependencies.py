@@ -3,7 +3,7 @@ from ingestao import buscar_estados, buscar_indicador_populacao
 from limpeza import limpar_populacao, limpar_estados, juntar_regiao
 from agregacao import preparar
 
-URL_ESTADO = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nomes'
+URL_ESTADO = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome'
 URL_POPULACAO = 'https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/-1/variaveis/9324?localidades=N3[all]'
 
 def ingestao_estados():

@@ -1,10 +1,7 @@
 import requests
 
-URL_ESTADO = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nomes'
-URL_POPULACAO = 'https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/-1/variaveis/9324?localidades=N3[all]'
-
 #------Função para buscar estado
-def buscar_estados():
+def buscar_estados(URL_ESTADO):
     try:
         response = requests.get(URL_ESTADO,timeout=30)
         response.raise_for_status()
@@ -34,7 +31,7 @@ def buscar_estados():
         return f'Dado inválido: {e}'
 
 #------Função para população
-def buscar_indicador_populacao():
+def buscar_indicador_populacao(URL_POPULACAO):
     try:
         response = requests.get(URL_POPULACAO, timeout=30)
         response.raise_for_status()
@@ -61,5 +58,3 @@ def buscar_indicador_populacao():
         return f'Erro HTTP: {e}'
     except ValueError as e:
         return f'Dado inválido: {e}'
-
-# print(buscar_indicador_populacao())

@@ -9,7 +9,7 @@ def preparar(df, regiao="Brasil"):
 
     # Ordena do maior para o menor valor
     df_ord = df_ord.sort_values(
-        by="valor",
+        by="populacao",
         ascending=False
     )
 
@@ -29,16 +29,16 @@ def preparar(df, regiao="Brasil"):
         "total": len(df_ord),
 
         "maior": {
-            "nome": df_ord.iloc[0]["nome"],
-            "valor": float(df_ord.iloc[0]["valor"])
+            "estado": df_ord.iloc[0]["estado"],
+            "populacao": float(df_ord.iloc[0]["populacao"])
         },
 
         "menor": {
-            "nome": df_ord.iloc[-1]["nome"],
-            "valor": float(df_ord.iloc[-1]["valor"])
+            "estado": df_ord.iloc[-1]["estado"],
+            "populacao": float(df_ord.iloc[-1]["populacao"])
         },
 
-        "media": float(df_ord["valor"].mean())
+        "media": float(df_ord["populacao"].mean())
     }
 
     return df_ord, kpis

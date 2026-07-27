@@ -26,7 +26,14 @@ class Regiao(str, Enum):
 
 
 def converter_figura(fig):
-    return fig.to_dict()
+    figura = fig.to_dict()
+
+    for trace in figura["data"]:
+        for eixo in ("x", "y", "z"):
+            if eixo in trace and hasattr(trace[eixo], "tolist"):
+                trace[eixo] = trace[eixo].tolist()
+
+    return figura
 
 
 def gerar_dashboard(
@@ -92,13 +99,18 @@ def gerar_dashboard(
         raise ValueError(
             "Tipo de gráfico inválido. Utilize: evolucao, ranking ou regiao."
         )
+    
+    figura = converter_figura(fig) 
 
+    print(figura["data"][0]["x"])
+    print(figura["data"][0]["y"])
+    
     return {
         "indicador": "populacao",
         "tipo": tipo_grafico,
         "regiao": regiao,
         "ano": ano,
-        "figura": converter_figura(fig),
+        "figura": figura,
         "kpis": kpis
     }
 

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Column, String, Integer, Float
 from sqlalchemy.orm import declarative_base
 
-db = create_engine("sqlite:///banco.db")
+db = create_engine("sqlite:///banco.db", connect_args={"check_same_thread": False})
 
 Base = declarative_base()
 

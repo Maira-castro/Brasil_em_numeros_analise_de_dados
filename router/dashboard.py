@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from dependencies import juntar_df_final
+from dependencies import buscar_df_final
 from agregacao import preparar
 from graficos import grafico_evolucao, grafico_ranking_estados, grafico_regiao
 from enum import Enum
@@ -33,7 +33,9 @@ def gerar_dashboard(
     df,
     tipo_grafico="evolucao",
     regiao="Brasil",
-    ano=None
+    ano=None,
+    ano_inicio=None,
+    ano_fim=None
 ):
     """
     Gera o gráfico e os KPIs conforme o tipo e a região.
@@ -61,7 +63,16 @@ def gerar_dashboard(
     # Escolhe qual gráfico gerar
     if tipo_grafico == "evolucao":
 
-        fig = grafico_evolucao(df)
+        if ano_inicio is None or ano_fim is None:
+            raise ValueError(
+                "Para o gráfico de evolução informe ano_inicio e ano_fim."
+            )
+
+        fig = grafico_evolucao(
+            df,
+            ano_inicio,
+            ano_fim
+        )
 
     elif tipo_grafico == "ranking":
 
@@ -97,7 +108,9 @@ def graficos(
     tipo: TipoGrafico = TipoGrafico.evolucao,
     regiao: Regiao = Regiao.brasil,
     ano: int | None = None,
-    df=Depends(juntar_df_final)
+    ano_inicio: int | None = None,
+    ano_fim: int | None = None,
+    df=Depends(buscar_df_final)
 ):
     try:
 
@@ -105,7 +118,9 @@ def graficos(
             df=df,
             tipo_grafico=tipo.value,
             regiao=regiao.value,
-            ano=ano
+            ano=ano,
+            ano_inicio=ano_inicio,
+            ano_fim=ano_fim
         )
 
     except ValueError as e:

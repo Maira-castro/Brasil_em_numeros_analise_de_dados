@@ -58,7 +58,6 @@ def limpar_populacao(dados):
         .astype(int)
     )
 
-
     return df
 
 
@@ -88,5 +87,5 @@ def juntar_regiao(df, df_estados):
         on="uf_id",
         how="left"
     )
-    print(df)
+
     return df

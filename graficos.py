@@ -1,30 +1,37 @@
 import plotly.express as px
 
 
-def grafico_evolucao(df):
+def grafico_evolucao(df, ano_inicio: int, ano_fim: int):
+    # Garante que o menor ano fique primeiro
+    if ano_inicio > ano_fim:
+        ano_inicio, ano_fim = ano_fim, ano_inicio
 
+    # Filtra o período
+    df_filtrado = df[
+        (df["ano"] >= ano_inicio) &
+        (df["ano"] <= ano_fim)
+    ]
+
+    # Agrupa por ano
     df_ano = (
-        df
-        .groupby("ano")["populacao"]
+        df_filtrado
+        .groupby("ano", as_index=False)["populacao"]
         .sum()
-        .reset_index()
     )
 
-
+    # Cria o gráfico
     fig = px.line(
         df_ano,
         x="ano",
         y="populacao",
         markers=True,
-        title="Evolução da população brasileira"
+        title=f"Evolução da população brasileira ({ano_inicio} - {ano_fim})"
     )
-
 
     fig.update_layout(
         xaxis_title="Ano",
         yaxis_title="População"
     )
-
 
     return fig
 

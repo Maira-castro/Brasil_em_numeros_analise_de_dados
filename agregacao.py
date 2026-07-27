@@ -26,7 +26,7 @@ def preparar(df, regiao="Brasil"):
 
     # Calcula os KPIs
     kpis = {
-        "total": len(df_ord),
+        "total": df_ord["estado"].nunique(),
 
         "maior": {
             "estado": df_ord.iloc[0]["estado"],

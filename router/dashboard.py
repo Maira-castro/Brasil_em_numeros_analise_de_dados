@@ -26,7 +26,7 @@ class Regiao(str, Enum):
 
 
 def converter_figura(fig):
-    return json.loads(fig.to_json())
+    return fig.to_dict()
 
 
 def gerar_dashboard(
